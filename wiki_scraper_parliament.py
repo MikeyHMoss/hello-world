@@ -1,10 +1,13 @@
+# the current version of this isn't working
 ## Attempting to create dataframe of members of UK Parliament
 ## Code should find list of members elected, navigate to their wiki page and collect some data on them.
+
 
 from bs4 import BeautifulSoup, SoupStrainer
 import urllib
 import pandas as pd
 import re
+import csv
 
 # Gets the right rows of information by providing criteria to the soup parser
 url = urllib.request.urlopen('https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_United_Kingdom_general_election,_2017').read()
@@ -12,6 +15,7 @@ parse_mp_entries = SoupStrainer(attrs={"vcard"})
 soup = BeautifulSoup(url,"html.parser", parse_only=parse_mp_entries)
 
 # loops through each item parsed and extracts the shortened link then creates the string for the full url
+
 mp_links = list()
 for link in soup.find_all('a'):
         mp_links.append('https://en.wikipedia.org'+str(link.get('href')))
@@ -24,6 +28,7 @@ for i in mp_links:
 
     # First, the name of the politician
     name = political_soup.find('h1').get_text()
+
 
     # Second, take the text of their description across the article and join it into a single variable
     desc_list = list()
@@ -73,4 +78,4 @@ for i in mp_links:
         df = df_row
     print('finished with ' + name)
 
-print(df)
+df.to_csv('HoC_data.csv')
